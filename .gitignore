@@ -1,0 +1,21 @@
+# sbt / Scala / IDE
+target/
+project/target/
+project/project/
+
+# IntelliJ / IDEA
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# Metals / Bloop / BSP
+.metals/
+.bloop/
+.bsp/
+
+# OS / misc
+*.class
+*.log
+.DS_Store
