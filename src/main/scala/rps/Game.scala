@@ -13,6 +13,12 @@ object Game {
       case "firstTo" => p1Wins >= target || p2Wins >= target
     }
 
+    def remainingInfo: String = format match {
+      case "single"  => ""
+      case "bestOf"  => s" | Remaining: ${target - (p1Wins + p2Wins)} rounds"
+      case "firstTo" => s" | First to: $target wins"
+    }
+
     while (!matchOver) {
       val (m1, m2) =
         if (!p2.isAI) playMultiplayerRound(p1, p2, moves)
@@ -27,12 +33,12 @@ object Game {
         case Some(`p2`) => println(Console.RED + s"${p2.name} wins this round!" + Console.RESET); p2Wins += 1
         case None       => println(Console.CYAN + "It's a tie!" + Console.RESET)
       }
-      println(s"Score: ${p1.name} $p1Wins - ${p2.name} $p2Wins\n")
+      println(s"Score: ${p1.name} $p1Wins - ${p2.name} $p2Wins$remainingInfo\n")
     }
 
     val matchWinner = if (p1Wins > p2Wins) p1 else p2
     println(Console.GREEN + s"${matchWinner.name} wins the match!" + Console.RESET)
-    Scoreboard.updateWinner(matchWinner.name)
+    Scoreboard.updateMatchStats(p1.name, p1Wins, p2.name, p2Wins)
   }
 
   def playMultiplayerRound(p1: Player, p2: Player, moves: List[Move]): (Move, Move) = {
