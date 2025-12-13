@@ -39,6 +39,7 @@ object Game {
     val matchWinner = if (p1Wins > p2Wins) p1 else p2
     println(Console.GREEN + s"${matchWinner.name} wins the match!" + Console.RESET)
     Scoreboard.updateMatchStats(p1.name, p1Wins, p2.name, p2Wins)
+    Scoreboard.saveStats()  // Auto-save stats after each match
   }
 
   def playMultiplayerRound(p1: Player, p2: Player, moves: List[Move]): (Move, Move) = {

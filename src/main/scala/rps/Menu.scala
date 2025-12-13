@@ -23,10 +23,35 @@ object Menu {
 
     readLine("Choose an option: ") match {
       case "1" => startNewGame()
-      case "2" => println("Continue feature not yet implemented."); mainMenu()
+      case "2" => continueGame()
       case "3" => Scoreboard.show(); mainMenu()
-      case "4" => println("Goodbye!")
+      case "4" => 
+        // Save stats on exit
+        Scoreboard.saveStats()
+        println("Goodbye!")
       case _   => println("Invalid choice."); mainMenu()
+    }
+  }
+
+  // TODO: Complete the continue game functionality
+  def continueGame(): Unit = {
+    if (!SaveLoad.hasSavedGame()) {
+      println(Console.RED + "No saved game found. Starting new game." + Console.RESET)
+      startNewGame()
+    } else {
+      SaveLoad.loadGame() match {
+        case scala.util.Success(state) =>
+          println(Console.GREEN + "Loaded saved game!" + Console.RESET)
+          // TODO: Reconstruct Player objects from state
+          // TODO: Reconstruct moves list from ruleset
+          // TODO: Call Game.playMatch with loaded state
+          println(Console.YELLOW + "Feature incomplete - need to wire up loaded state to Game.playMatch()" + Console.RESET)
+          println("Returning to menu...")
+          mainMenu()
+        case scala.util.Failure(e) =>
+          println(Console.RED + s"Failed to load game: ${e.getMessage}" + Console.RESET)
+          mainMenu()
+      }
     }
   }
 

@@ -14,6 +14,19 @@ case class PlayerStats(
 object Scoreboard {
   private var stats: Map[String, PlayerStats] = Map.empty
 
+  // Load stats on startup if available
+  def initialize(): Unit = {
+    SaveLoad.loadStats() match {
+      case scala.util.Success(loadedStats) => 
+        stats = loadedStats
+        if (loadedStats.nonEmpty) println(Console.GREEN + "Loaded previous scoreboard data." + Console.RESET)
+      case scala.util.Failure(_) => // No saved stats, start fresh
+    }
+  }
+
+  // Expose stats for saving
+  def getAllStats: Map[String, PlayerStats] = stats
+
   def updateMatchStats(p1Name: String, p1RoundsWon: Int, p2Name: String, p2RoundsWon: Int): Unit = {
     val p1Stats = stats.getOrElse(p1Name, PlayerStats(p1Name))
     val p2Stats = stats.getOrElse(p2Name, PlayerStats(p2Name))
@@ -38,6 +51,11 @@ object Scoreboard {
         roundsWon = p2Stats.roundsWon + p2RoundsWon
       )
     )
+  }
+
+  // Save stats after each match completion
+  def saveStats(): Unit = {
+    SaveLoad.saveStats(stats)
   }
 
   def show(): Unit = {
