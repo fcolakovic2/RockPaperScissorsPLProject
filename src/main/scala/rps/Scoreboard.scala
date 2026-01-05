@@ -67,8 +67,8 @@ object Scoreboard {
       val sortChoice = scala.io.StdIn.readLine("Choose sorting (default: 1): ")
       
       val sorted = sortChoice match {
-        case "2" => stats.values.toList.sortBy(_.winRate)(Ordering.Double.reverse)
-        case _   => stats.values.toList.sortBy(_.matchesWon)(Ordering.Int.reverse)
+        case "2" => stats.values.toList.sortBy(_.winRate)(Ordering[Double].reverse)
+        case _   => stats.values.toList.sortBy(_.matchesWon)(Ordering[Int].reverse)
       }
 
       println(f"\n${"Player"}%-15s ${"Matches"}%-10s ${"Won"}%-10s ${"Rounds"}%-10s ${"Win Rate"}%-10s")

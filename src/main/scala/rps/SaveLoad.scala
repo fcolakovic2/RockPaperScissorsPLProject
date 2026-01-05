@@ -83,6 +83,13 @@ object SaveLoad {
     new File(SAVE_FILE).exists()
   }
 
+  def deleteSaveFile(): Unit = {
+    val file = new File(SAVE_FILE)
+    if (file.exists()) {
+      file.delete()
+    }
+  }
+
   // TODO: Implement scoreboard persistence
   def saveStats(stats: Map[String, PlayerStats]): Try[Unit] = Try {
     val writer = new PrintWriter(new File(STATS_FILE))

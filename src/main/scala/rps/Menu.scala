@@ -33,7 +33,6 @@ object Menu {
     }
   }
 
-  // TODO: Complete the continue game functionality
   def continueGame(): Unit = {
     if (!SaveLoad.hasSavedGame()) {
       println(Console.RED + "No saved game found. Starting new game." + Console.RESET)
@@ -42,12 +41,37 @@ object Menu {
       SaveLoad.loadGame() match {
         case scala.util.Success(state) =>
           println(Console.GREEN + "Loaded saved game!" + Console.RESET)
-          // TODO: Reconstruct Player objects from state
-          // TODO: Reconstruct moves list from ruleset
-          // TODO: Call Game.playMatch with loaded state
-          println(Console.YELLOW + "Feature incomplete - need to wire up loaded state to Game.playMatch()" + Console.RESET)
-          println("Returning to menu...")
-          mainMenu()
+          println(s"Resuming: ${state.p1Name} vs ${state.p2Name}")
+          println(s"Current score: ${state.p1Name} ${state.currentP1Wins} - ${state.p2Name} ${state.currentP2Wins}")
+          
+          // Reconstruct Player objects from state
+          val player1 = Player(state.p1Name, state.p1IsAI, state.p1Difficulty)
+          val player2 = Player(state.p2Name, state.p2IsAI, state.p2Difficulty)
+          
+          // Reconstruct moves list from ruleset
+          val moves = if (state.ruleset == "classic") Move.classicMoves else Move.extendedMoves
+          
+          // Save state for potential rematch
+          lastP1 = Some(player1)
+          lastP2 = Some(player2)
+          lastMoves = moves
+          lastFormat = state.matchFormat
+          lastTarget = state.targetRounds
+          
+          // Resume the match with current scores
+          Game.playMatch(player1, player2, moves, state.matchFormat, state.targetRounds, state.currentP1Wins, state.currentP2Wins)
+          
+          // Delete save file after successful load
+          SaveLoad.deleteSaveFile()
+          
+          // Post-game options
+          println("Options: (r) Rematch, (m) Menu, (e) Exit")
+          readLine().toLowerCase match {
+            case "r" => rematch()
+            case "m" => mainMenu()
+            case "e" => println("Goodbye!")
+            case _   => mainMenu()
+          }
         case scala.util.Failure(e) =>
           println(Console.RED + s"Failed to load game: ${e.getMessage}" + Console.RESET)
           mainMenu()
